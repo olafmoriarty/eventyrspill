@@ -18,7 +18,10 @@ public class StoryManager : MonoBehaviour
 	private Dictionary<string, GameObject> characterObjects = new Dictionary<string, GameObject>();
 	private GameObject talkingCharacter;
 	private GameObject playerCharacter;
-	
+	private List<string> currentChoices = new List<string>();
+	private Dictionary<string, int> currentHotspots = new Dictionary<string, int>();
+	private int currentChoice = -1;
+
 
 	void Awake() {
 		story = new Ink.Runtime.Story(storyJSON.text);
@@ -37,7 +40,12 @@ public class StoryManager : MonoBehaviour
 
 	void Update() {
 		if (Input.GetButtonDown("Jump")) {
-			ContinueStory();
+			if (currentChoices.Count > 0 && currentChoice >= 0) {
+				MakeChoice(currentChoice);
+			}
+			else {
+				ContinueStory();
+			}
 		}
 	}
 
@@ -79,6 +87,34 @@ public class StoryManager : MonoBehaviour
 				textBox.GetComponent<TMPro.TextMeshProUGUI>().text = nextSentence;
 			}
 		}
+		// Is there a choice to make?
+		else if (story.currentChoices.Count > 0) {
+			List<string> newChoices = new List<string>();
+			Dictionary<string, int> newHotspots = new Dictionary<string, int>();
+            for (int i = 0; i < story.currentChoices.Count; i++) {
+				
+				string choiceText = story.currentChoices[i].text.Trim();
+				if (currentMode == "overworld") {
+					string[] hotspotArray = choiceText.Split(": ");
+					newHotspots.Add(hotspotArray[0], i);
+					choiceText = hotspotArray[1];
+				}
+                newChoices.Add(choiceText);
+            }
+            currentChoices = newChoices;
+			currentHotspots = newHotspots;
+		}
+	}
+
+	void MakeChoice(int option) {
+		if (option >= 0 && option < story.currentChoices.Count) {
+			story.ChooseChoiceIndex(option);
+			currentChoice = -1;
+			currentChoices = new List<string>();
+			currentHotspots = new Dictionary<string, int>();
+			ContinueStory();
+		}
+
 	}
 
 	GameObject CharacterObjectFromName(string characterName) {
@@ -113,6 +149,13 @@ public class StoryManager : MonoBehaviour
 	}
 
 	public void SetCurrentHotspot(string colliderName) {
-		hotspotBox.GetComponent<TMPro.TextMeshProUGUI>().text = colliderName;
+		if (colliderName == "") {
+			currentChoice = -1;
+			hotspotBox.GetComponent<TMPro.TextMeshProUGUI>().text = "";
+		}
+		else if (currentHotspots.ContainsKey(colliderName)) {
+			currentChoice = currentHotspots[colliderName];
+			hotspotBox.GetComponent<TMPro.TextMeshProUGUI>().text = currentChoices[currentChoice];
+		}
 	}
 }

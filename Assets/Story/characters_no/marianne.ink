@@ -1,5 +1,5 @@
 === marianne
-BARTENDER: Hei, der var du! Korleis gjekk første dag på ny jobb?
+BARTENDER: Hei, der var du! Korleis gjekk første dag på ny jobb? #mode:conversation
 ANITA: Joda. Eg er utmatta, men eg trur eg kan trivast der.
 ANITA: Korleis går det å vera her aleine? Kan eg hjelpe til med noko?
 BARTENDER: Ikkje stress med det. Eg har jobba aleine i mange år før du dukka opp, veit du. Eg klarer meg.

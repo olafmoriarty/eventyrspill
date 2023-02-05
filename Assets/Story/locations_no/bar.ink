@@ -4,12 +4,12 @@
 }
 
 SETTINGS #mode:overworld
-+ [BARTENDER]
++ [BARTENDER: Marianne]
 ->marianne->
-+ [RONNY]
++ [RONNY: Ronny]
 ->ronny->
-+ [TELEFON] ->telefon
-+ [BOKHYLLE] ->bokhylle
++ [TELEFON: Telefonautomat] ->telefon
++ [BOKHYLLE: Bokhylle] ->bokhylle
 
 - ->Bar
 
