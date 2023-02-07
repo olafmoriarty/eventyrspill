@@ -10,10 +10,7 @@ public class StoryManager : MonoBehaviour
 
 	[SerializeField] private TextAsset storyJSON;
 	private Story story;
-	private GameObject textBox;
-	private GameObject hotspotBox;
-	private Camera mainCamera;
-	private RectTransform uiCanvas;
+	private UIManager ui;
 	private string currentMode;
 	private Dictionary<string, GameObject> characterObjects = new Dictionary<string, GameObject>();
 	private GameObject talkingCharacter;
@@ -25,11 +22,7 @@ public class StoryManager : MonoBehaviour
 
 	void Awake() {
 		story = new Ink.Runtime.Story(storyJSON.text);
-
-		textBox = GameObject.Find("/UI/Dialogue");
-		hotspotBox = GameObject.Find("/UI/CurrentHotspot");
-		mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-		uiCanvas = GameObject.Find("/UI").GetComponent<RectTransform>();
+		ui = GetComponent<UIManager>();
 
 		playerCharacter = CharacterObjectFromName("ANITA");
 	}
@@ -74,17 +67,17 @@ public class StoryManager : MonoBehaviour
 					GroupCollection groups = matches[0].Groups;
 					string characterName = groups["char"].Value;
 					talkingCharacter = CharacterObjectFromName(characterName);
-					MoveTextBox(talkingCharacter);
+					ui.MoveTextBox(talkingCharacter);
 					nextSentence = nextSentence.Substring(nextSentence.IndexOf(':') + 2);
 				}
 			}
 
 			if (nextSentence == "CUTSCENE" || nextSentence == "SETTINGS") {
-				textBox.GetComponent<TMPro.TextMeshProUGUI>().text = "";
+				ui.SetDialogueText("");
 				ContinueStory();
 			}
 			else {
-				textBox.GetComponent<TMPro.TextMeshProUGUI>().text = nextSentence;
+				ui.SetDialogueText(nextSentence);
 			}
 		}
 		// Is there a choice to make?
@@ -103,6 +96,10 @@ public class StoryManager : MonoBehaviour
             }
             currentChoices = newChoices;
 			currentHotspots = newHotspots;
+
+			if (currentMode == "conversation") {
+				ui.ShowChoices(newChoices);
+			}
 		}
 	}
 
@@ -131,15 +128,6 @@ public class StoryManager : MonoBehaviour
 		return character;
 	}
 
-	void MoveTextBox(GameObject character) {
-		// Get the transform of the text box so we can move it around
-		RectTransform textBoxTransform = textBox.GetComponent<RectTransform>();
-
-		Vector2 viewportPosition = mainCamera.WorldToViewportPoint(character.transform.position + new Vector3(0, 3f, 0));
-        Vector2 screenPosition = new Vector2((viewportPosition.x * uiCanvas.sizeDelta.x) - (uiCanvas.sizeDelta.x * 0.5f), (viewportPosition.y * uiCanvas.sizeDelta.y) - (uiCanvas.sizeDelta.y * 0.5f));
-        textBoxTransform.anchoredPosition = screenPosition;
-	}
-
 	public string GetCurrentMode() {
 		return currentMode;
 	}
@@ -151,11 +139,11 @@ public class StoryManager : MonoBehaviour
 	public void SetCurrentHotspot(string colliderName) {
 		if (colliderName == "") {
 			currentChoice = -1;
-			hotspotBox.GetComponent<TMPro.TextMeshProUGUI>().text = "";
+			ui.SetHotspotText("");
 		}
 		else if (currentHotspots.ContainsKey(colliderName)) {
 			currentChoice = currentHotspots[colliderName];
-			hotspotBox.GetComponent<TMPro.TextMeshProUGUI>().text = currentChoices[currentChoice];
+			ui.SetHotspotText(currentChoices[currentChoice]);
 		}
 	}
 }
