@@ -15,7 +15,7 @@ public class StoryManager : MonoBehaviour
 	private Dictionary<string, GameObject> characterObjects = new Dictionary<string, GameObject>();
 	private GameObject talkingCharacter;
 	private GameObject playerCharacter;
-	private List<string> currentChoices = new List<string>();
+	[SerializeField] private List<string> currentChoices = new List<string>();
 	private Dictionary<string, int> currentHotspots = new Dictionary<string, int>();
 	private int currentChoice = -1;
 
@@ -23,12 +23,12 @@ public class StoryManager : MonoBehaviour
 	void Awake() {
 		story = new Ink.Runtime.Story(storyJSON.text);
 		ui = GetComponent<UIManager>();
-
 		playerCharacter = CharacterObjectFromName("ANITA");
 	}
 
 	void Start() {
 		ContinueStory();
+		
 	}
 
 	void Update() {
@@ -103,13 +103,15 @@ public class StoryManager : MonoBehaviour
 		}
 	}
 
-	void MakeChoice(int option) {
+	public void MakeChoice(int option, bool fromSelect = false) {
 		if (option >= 0 && option < story.currentChoices.Count) {
 			story.ChooseChoiceIndex(option);
 			currentChoice = -1;
 			currentChoices = new List<string>();
 			currentHotspots = new Dictionary<string, int>();
-			ContinueStory();
+			if (!fromSelect || !Input.GetButtonDown("Jump")) {
+				ContinueStory();
+			}
 		}
 
 	}

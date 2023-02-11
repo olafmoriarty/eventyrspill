@@ -12,6 +12,7 @@ BARTENDER: Kva vil du ha å drikke?
     ANITA: Ein cola. On the rocks.
 - BARTENDER: Du er ikkje nøydt til å drikke det same kvar kveld, Anita. Det er lov å variere litt.
 ANITA: Næh. Eg veit kva eg liker.
-BARTENDER: Du sit saman med Ronny og kva-ho-no-heiter, ikkje sant? Eg skal berre tørke ferdig her, så kjem eg bort med drikke til deg etter det.
+BARTENDER: Du sit saman med Ronny og kva-ho-no-heiter, ikkje sant?
+Eg skal berre tørke ferdig her, så kjem eg bort med drikke til deg etter det.
 ANITA: Takk skal du ha.
 ->->
